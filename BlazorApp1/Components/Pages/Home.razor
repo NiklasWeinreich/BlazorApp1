@@ -1,7 +1,33 @@
 ﻿@page "/"
+@* @attribute [Microsoft.AspNetCore.Authorization.Authorize(policy: "authenticatedUser")] *@ @*redirect for profiler der ikke er logget ind*@
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@* <AuthorizeView>
+    <Authorized>
+        <p>Welcome to your new app.</p>
+    </Authorized>
+    <Authorized>
+        remeber to use 2 factor 
+    </Authorized>
+</AuthorizeView> *@
 
-Welcome to your new app.
+@if(_isAuthenticated){
+    <p>VELKOMMEN TIL DIN APP</p>
+}
+else
+{
+    <p>log ind først</p>
+}
+
+@code{
+    private bool _isAuthenticated;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _isAuthenticated = user.Identity.IsAuthenticated;
+    }
+}
+
